@@ -3,9 +3,13 @@ package main
 import (
     "net/http"
     "log"
+    "todo-app/commons/sqlite"
 )
 
 func main() {
+    sqlite.InitDB()
+    defer sqlite.DB.Close()
+
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("Hello, World!"))
     })
