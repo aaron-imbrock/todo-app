@@ -2,9 +2,9 @@ package todo
 
 import (
     "database/sql"
-    "log"
     "todo-app/commons/sqlite"
 )
+    // "log"
 
 type Todo struct {
     ID          int     `json:"id"`
