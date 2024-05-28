@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name=""viewport" content="width=device-width, initial-scale=1.0">
+        <title>Todo App</title>
+    </head>
+    <body>
+        <h1>Todo List</h1>
+        <ul id="todo-list">
+            {{range .}}
+            <li>
+                <input type="checkbox" {{if .Completed}}checked{{end}} data-id="{{.ID}}" class="todo-item">
+                {{.Title}}
+                <button data-id="{{.ID}}" class=""delete-todo">Delete</button>
+            </li>
+            {{end}}
+        </ul>
+        <h2>Add New Todo</h2>
+        <form id="todo-form">
+            <input type="text" id="todo-title" placeholder="Enter new todo">
+            <button type="submit">Add</button>
+        </form>
+        <script>
+            document.getElementById('todo-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = document.getElementById('todo-title').value;
+                fetch('/todos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ title })
+                }).then(() => {
+                    window.location.reload();
+                });
+            });
+
+            document.querySelectorAll('.delete-todo').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    fetch('/todos?id=' + id, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                });
+            });
+
+            document.querySelectorAll('.todo-item').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const id = this.getAttribute('data-id');
+                    const completed = this.checked;
+                    fetch('/todos/completion?id=' + id + '&completed' + completed, {
+                        method: 'PUT'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                });
+            })
+        </script>
+    </body>
+</html>
